@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,11 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div id="app">
         <aside class="sidebar">
@@ -21,7 +25,6 @@
                     <li class="active"><a href="#" id="overview-btn">Dashboard</a></li>
                     <li><a href="#" id="simulation-btn">Simulate Drift</a></li>
                     <li><a href="#" id="analytics-btn">Analytics</a></li>
-                    <li><a href="#" id="case-study-btn">Case Study</a></li>
                 </ul>
             </nav>
             <div class="status-card">
@@ -50,8 +53,12 @@
                     <h3>Overall Drift Score</h3>
                     <div class="score-display">
                         <svg viewBox="0 0 36 36" class="circular-chart" id="drift-score-chart">
-                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                            <path class="circle" id="drift-score-path" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                            <path class="circle-bg"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831">
+                            </path>
+                            <path class="circle" id="drift-score-path" stroke-dasharray="0, 100"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831">
+                            </path>
                         </svg>
                         <span id="drift-score-value">0.02</span>
                     </div>
@@ -95,29 +102,9 @@
                     <canvas id="timeline-chart"></canvas>
                 </div>
             </div>
-
-            <section id="mindset-section" class="mindset-grid">
-                <div class="card dark mindset-card">
-                    <div class="mindset-icon">🔬</div>
-                    <h4>Researcher Mindset</h4>
-                    <div class="mindset-content">
-                        <p><strong>Correctness:</strong> Using Kolmogorov-Smirnov (KS) test for statistical significance (p < 0.05).</p>
-                        <p><strong>Limitations:</strong> Sensitive to sample size. Does not detect feature correlations changes.</p>
-                        <p><strong>Assumptions:</strong> Independent and Identically Distributed (IID) base data.</p>
-                    </div>
-                </div>
-                <div class="card dark mindset-card">
-                    <div class="mindset-icon">💼</div>
-                    <h4>Entrepreneur Mindset</h4>
-                    <div class="mindset-content">
-                        <p><strong>Economic Value:</strong> Prevents silent profit leaks from degraded credit scoring.</p>
-                        <p><strong>Friction:</strong> Easy plug-and-play with existing ML pipelines.</p>
-                        <p><strong>Extensibility:</strong> Can be adapted for NLP (embedding drift) or Computer Vision.</p>
-                    </div>
-                </div>
-            </section>
         </main>
     </div>
     <script type="module" src="main.js"></script>
 </body>
+
 </html>
