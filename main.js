@@ -21,10 +21,25 @@ async function init() {
     setupCharts();
     setupAlertSystem();
     attachEventListeners();
+    await checkBackendStatus();
     await runMonitoringCycle();
     
     // Initial UI state
     updateTimestamp();
+}
+
+async function checkBackendStatus() {
+    const statusEl = document.getElementById('backend-status');
+    try {
+        const response = await fetch('http://localhost:3001/api/health');
+        if (response.ok) {
+            statusEl.innerHTML = '<span class="dot green"></span> Cloud Engine';
+        } else {
+            throw new Error();
+        }
+    } catch (e) {
+        statusEl.innerHTML = '<span class="dot yellow"></span> Safe Mode (Local)';
+    }
 }
 
 function setupAlertSystem() {

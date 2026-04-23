@@ -134,6 +134,16 @@ nav a:hover {
     background: var(--danger);
 }
 
+.dot.gray {
+    background: #475569;
+}
+
+.status-indicator.mini {
+    font-size: 0.7rem;
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+}
+
 .pulse {
     animation: pulse-ring 2s infinite;
 }

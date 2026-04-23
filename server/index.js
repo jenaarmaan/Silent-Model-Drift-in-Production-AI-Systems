@@ -5,8 +5,12 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import * as dotenv from 'dotenv';
 import { initDb } from './db.js';
 import { DriftDetectionService } from '../shared/drift-service.js';
+import logger from './logger.js';
+
+dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
@@ -14,7 +18,7 @@ const io = new Server(httpServer, {
     cors: { origin: "*" }
 });
 const port = process.env.PORT || 3001;
-const JWT_SECRET = 'guardian-secret-key-2024'; // In prod, use env variable
+const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -24,7 +28,8 @@ let db;
 // Schema Validation
 const DetectSchema = z.object({
     baseline: z.array(z.number()).min(10, "Baseline too small"),
-    production: z.array(z.number()).min(10, "Production too small")
+    production: z.array(z.number()).min(10, "Production too small"),
+    featureName: z.string().optional()
 });
 
 // Middleware: Auth
@@ -35,7 +40,10 @@ const authenticateToken = (req, res, next) => {
     if (!token) return res.sendStatus(401);
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403);
+        if (err) {
+            logger.warn(`Failed auth attempt: ${err.message}`);
+            return res.sendStatus(403);
+        }
         req.user = user;
         next();
     });
@@ -44,7 +52,7 @@ const authenticateToken = (req, res, next) => {
 // Initialize Database
 initDb().then(database => {
     db = database;
-    console.log('✅ SQLite Database initialized');
+    logger.info('✅ SQLite Database initialized');
 });
 
 // --- API ENDPOINTS ---
@@ -96,13 +104,16 @@ app.post('/api/detect', authenticateToken, async (req, res) => {
             });
 
             // Simulated External Webhook (Slack/PagerDuty)
-            console.log(`[ALERT] Triggering Slack Webhook for ${featureName}...`);
-            // await fetch(SLACK_WEBHOOK_URL, { ... })
+            logger.info(`[ALERT] Triggering Slack Webhook for ${featureName}...`);
+            // await fetch(process.env.SLACK_WEBHOOK_URL, { ... })
         }
 
         res.json({ ...results, featureName });
     } catch (err) {
-        console.error('Drift detection failed:', err);
+        if (err instanceof z.ZodError) {
+            return res.status(400).json({ error: 'Validation Error', details: err.errors });
+        }
+        logger.error(`Drift detection failed: ${err.message}`);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -115,6 +126,7 @@ app.get('/api/history', async (req, res) => {
         const history = await db.all('SELECT * FROM drift_history ORDER BY timestamp DESC LIMIT 50');
         res.json(history.map(h => ({ ...h, driftDetected: h.driftDetected === 1 })));
     } catch (err) {
+        logger.error(`Failed to fetch history: ${err.message}`);
         res.status(500).json({ error: 'Failed to fetch history' });
     }
 });
@@ -125,5 +137,5 @@ app.get('/api/health', (req, res) => {
 
 // Use httpServer instead of app.listen for Socket.io
 httpServer.listen(port, () => {
-    console.log(`🚀 Guardian AI Production Backend running at http://localhost:${port}`);
+    logger.info(`🚀 Guardian AI Production Backend running at http://localhost:${port}`);
 });
