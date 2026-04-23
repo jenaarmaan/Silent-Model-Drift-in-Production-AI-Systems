@@ -435,3 +435,60 @@ canvas {
 .btn-secondary:hover {
     background: rgba(255, 255, 255, 0.1);
 }
+
+/* Production Enhancements */
+.glass-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+}
+
+.glass-select option {
+    background: var(--bg-dark);
+    color: var(--text-main);
+}
+
+#toast-container {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.toast {
+    background: rgba(15, 23, 42, 0.95);
+    border-left: 4px solid var(--danger);
+    padding: 1.25rem;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    color: white;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    max-width: 350px;
+    border: 1px solid var(--glass-border);
+}
+
+.toast h4 {
+    color: var(--danger);
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.toast p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+@keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}

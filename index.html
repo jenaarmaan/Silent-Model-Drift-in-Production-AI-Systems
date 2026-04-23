@@ -42,10 +42,16 @@
                     <p id="current-timestamp"></p>
                 </div>
                 <div class="controls">
+                    <select id="feature-selector" class="glass-select">
+                        <option value="income">Income Distribution</option>
+                        <option value="creditScore">Credit Score</option>
+                        <option value="debtRatio">Debt Ratio</option>
+                    </select>
                     <button id="trigger-drift" class="btn-primary">⚡ Trigger Market Shift</button>
                     <button id="reset-baseline" class="btn-secondary">🔄 Reset Baseline</button>
                 </div>
             </header>
+            <div id="toast-container"></div>
 
             <div class="dashboard-grid">
                 <!-- Drift Score Cards -->
