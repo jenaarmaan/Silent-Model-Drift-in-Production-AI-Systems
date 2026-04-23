@@ -19,6 +19,7 @@ let state = {
  */
 async function init() {
     setupCharts();
+    setupAlertSystem();
     attachEventListeners();
     await runMonitoringCycle();
     
@@ -26,7 +27,29 @@ async function init() {
     updateTimestamp();
 }
 
+function setupAlertSystem() {
+    dataService.setupSocketListeners((data) => {
+        showToast(data.message, `Score: ${data.score.toFixed(3)} at ${new Date(data.timestamp).toLocaleTimeString()}`);
+    });
+}
+
+function showToast(title, message) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<h4>${title}</h4><p>${message}</p>`;
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
 function attachEventListeners() {
+    const selector = document.getElementById('feature-selector');
+    
     document.getElementById('trigger-drift').addEventListener('click', async () => {
         state.productionData = dataService.generateScenarioData(500, 'recession');
         await runMonitoringCycle();
@@ -37,6 +60,15 @@ function attachEventListeners() {
         state.productionData = dataService.generateScenarioData(500, 'baseline');
         await runMonitoringCycle();
         updateUIState('healthy');
+    });
+
+    selector.addEventListener('change', async (e) => {
+        // In a real app, we would fetch specific baseline/production for this feature
+        // For now, we update the UI labels
+        const feature = e.target.value;
+        const chartTitle = document.querySelector('.chart-header h3');
+        chartTitle.innerText = `Distribution Shift (${feature.charAt(0).toUpperCase() + feature.slice(1)})`;
+        await runMonitoringCycle();
     });
 }
 
@@ -50,10 +82,14 @@ function updateTimestamp() {
  */
 async function runMonitoringCycle() {
     try {
-        const results = await dataService.runDriftDetection(state.baselineData.income, state.productionData.income);
+        const feature = document.getElementById('feature-selector').value;
+        const baseline = state.baselineData[feature];
+        const production = state.productionData[feature];
+
+        const results = await dataService.runDriftDetection(baseline, production);
         
         updateDashboardUI(results);
-        await updateCharts(results);
+        await updateCharts(results, feature);
         updateTimestamp();
     } catch (error) {
         console.error("Monitoring Cycle Failed:", error);
@@ -177,14 +213,14 @@ function setupCharts() {
     });
 }
 
-async function updateCharts(results) {
-    updateDistributionChart();
+async function updateCharts(results, feature) {
+    updateDistributionChart(feature);
     await updateTimelineChart(results.statistic);
 }
 
-function updateDistributionChart() {
-    const baseline = state.baselineData.income;
-    const production = state.productionData.income;
+function updateDistributionChart(feature) {
+    const baseline = state.baselineData[feature];
+    const production = state.productionData[feature];
     
     const bins = 40;
     const min = Math.min(...baseline, ...production);
