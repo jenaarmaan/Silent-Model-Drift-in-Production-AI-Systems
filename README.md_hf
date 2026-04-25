@@ -1,0 +1,24 @@
+---
+title: Guardian AI Drift Detector
+emoji: 🛡️
+colorFrom: blue
+colorTo: purple
+sdk: gradio
+sdk_version: 4.0.0
+app_file: app.py
+pinned: false
+---
+
+# Guardian AI | Silent Model Drift Detection
+
+Production-grade observability tool to detect distribution shifts in ML features using the Kolmogorov-Smirnov test.
+
+### Features
+- **Real-time KS-Test**: Detects statistical deviations between baseline and production data.
+- **Visual Analytics**: Interactive histograms showing distribution overlap.
+- **Impact Simulation**: Visualizes how drift correlates with Accuracy and F1 score drops.
+
+### Quick Start
+1. Select a feature or scenario.
+2. Click **Run Analysis**.
+3. Observe the distribution shift and KPI impact.
